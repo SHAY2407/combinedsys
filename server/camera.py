@@ -24,7 +24,7 @@ class Camera:
     # private method for binding the port
     def _bind(self): 
         self.footage_socket = self.context.socket(zmq.SUB) 
-        self.footage_socket.bind('tcp://' + self.tcp)    # binding the tcp of the server
+        self.footage_socket.bind('tcp://' + self.tcp + ':5555')    # binding the tcp of the server
         self.footage_socket.setsockopt_string(zmq.SUBSCRIBE, np.unicode(''))
 
 
