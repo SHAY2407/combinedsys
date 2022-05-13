@@ -48,7 +48,7 @@ class Camera:
 
 
 if __name__ == "__main__":
-    # Server must connect to the CLIENT'S IP, NOT IT'S OWN IP
+    # Camera is opened on the server's ip, NOT the client's ip
     c = Camera("Camera", "192.168.1.137", zmq.Context())
     c.start()
 
