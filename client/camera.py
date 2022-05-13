@@ -37,4 +37,11 @@ if __name__ == "__main__":
     ctx = zmq.Context()
     c = Camera(ctx)
     c.start()
-    c.close()
+    while True:
+        try:
+            f = c.get_frame()
+            c.send_frame(f)
+        except KeyboardInterrupt:
+            c.close()
+            break
+    
