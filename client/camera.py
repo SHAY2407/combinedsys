@@ -12,10 +12,11 @@ class Camera():
     - send the frame to the server
     """
 
-    def __init__(self, context):
+    def __init__(self, context, uri: str):
         self.context = context
         self.footage_socket = self.context.socket(zmq.PUB)
-        self.footage_socket.connect('tcp://10.4.231.124:5555')
+        self.uri = uri
+        self.footage_socket.connect(self.uri)
 
     def start(self, index=0):
         self.camera = cv2.VideoCapture(index)  # init the camera
@@ -35,7 +36,7 @@ class Camera():
 
 if __name__ == "__main__":
     ctx = zmq.Context()
-    c = Camera(ctx)
+    c = Camera(ctx, "tcp://192.1168.1.137:5555")
     c.start()
     while True:
         try:
