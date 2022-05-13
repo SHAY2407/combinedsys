@@ -36,7 +36,7 @@ class Camera():
 
 if __name__ == "__main__":
     ctx = zmq.Context()
-    c = Camera(ctx, "tcp://192.1168.1.137:5555")
+    c = Camera(ctx, "tcp://192.168.1.137:5555")
     c.start()
     while True:
         try:
