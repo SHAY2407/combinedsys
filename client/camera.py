@@ -14,6 +14,8 @@ class Camera():
 
     def __init__(self, context, uri: str):
         self.context = context
+        # Note that the client is not binding the ip, but connecting to it
+        # It is the server that binds the ip. The client just connects.
         self.footage_socket = self.context.socket(zmq.PUB)
         self.uri = uri
         self.footage_socket.connect(self.uri)
