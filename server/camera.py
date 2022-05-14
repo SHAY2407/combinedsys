@@ -48,7 +48,7 @@ class Camera:
 
 
 if __name__ == "__main__":
-    c = Camera('Camera','192.168.1.137',zmq.Context())
+    c = Camera('Camera','192.168.0.104',zmq.Context())
     c.start()
 
 
