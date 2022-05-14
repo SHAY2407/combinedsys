@@ -15,7 +15,7 @@ class Video:
         """
         with dpg.window(label="Live VideoFeed", width=500, height=100):
             self.uri_entry = dpg.add_input_text(
-                label="Client IP and Port", default_value=uri, decimal=True
+                label="Client IP and Port", default_value=uri
             )
             self.start_btn = dpg.add_button(
                 label="Start Stream", callback=self.start_cmd
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     import zmq
 
     dpg.create_context()
-    v = Video("0.0.0.0:9000", zmq.Context())
+    v = Video(zmq.Context(), "0.0.0.0:9000")
     dpg.create_viewport(title=__loader__.name, width=600, height=200)
     dpg.setup_dearpygui()
     dpg.show_viewport()
