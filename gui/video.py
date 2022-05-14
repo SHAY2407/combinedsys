@@ -2,6 +2,9 @@
 
 import dearpygui.dearpygui as dpg
 from server.camera import Camera
+import numpy as np
+import asyncio
+import zmq.asyncio
 
 
 class Video:
@@ -9,11 +12,12 @@ class Video:
     Requires a valid dpg context to already be created.
     """
 
-    def __init__(self, zmq_ctx, uri):
+    def __init__(self, zmq_ctx, uri, res=(640, 480)):
         """Args:
         zmq_ctx: (zmq.Context): ZeroMQ context to use
         uri: (str, optional): Default ip and port for client video feed
         """
+        self.started = False
         self.zmq_ctx = zmq_ctx
         with dpg.window(label="Live VideoFeed", width=500, height=100):
             self.uri_entry = dpg.add_input_text(
@@ -22,11 +26,29 @@ class Video:
             self.start_btn = dpg.add_button(
                 label="Start Stream", callback=self.start_cmd
             )
+            self.fb = [0] * (res[0] * res[1])
+            with dpg.texture_registry(show=True):
+                self.raw_texture = dpg.add_raw_texture(
+                    res[0], res[1], self.fb, format=dpg.mvFormat_Float_rgb
+                )
 
     def start_cmd(self, sender):
+        """This method should only be called once, calling again will result
+        in a zmq Address in Use error
+        """
         self.uri = dpg.get_value(self.uri_entry)
         print(self.uri)
+        self.started = True
         self._server_start()
+
+    async def update(self):
+        frame = await self.__camera.get_frame()
+        frame = np.flip(frame, 2).ravel()  # Convert from BGR to RGB
+        frame = np.asfarray(
+            frame, dtype="f"
+        )  # Image is displayed on the GPU, so need to convert to float
+        frame = np.true_divide(frame, 255.0)  # 32 bit floats
+        dpg.set_value(self.raw_texture, frame)
 
     def _server_start(self):
         self.__camera = Camera("Camera", self.uri, self.zmq_ctx)
@@ -37,10 +59,19 @@ if __name__ == "__main__":
     import zmq
     import socket
 
-    dpg.create_context()
-    v = Video(zmq.Context(), socket.gethostbyname(socket.gethostname()))
-    dpg.create_viewport(title=__loader__.name, width=600, height=200)
-    dpg.setup_dearpygui()
-    dpg.show_viewport()
-    dpg.start_dearpygui()
-    dpg.destroy_context()
+    async def test():
+        dpg.create_context()
+        v = Video(zmq.asyncio.Context(), socket.gethostbyname(socket.gethostname()))
+        dpg.create_viewport(title=__loader__.name, width=600, height=200)
+        dpg.setup_dearpygui()
+        dpg.show_viewport()
+
+        while dpg.is_dearpygui_running():
+            if v.started:
+                t = asyncio.create_task(v.update())
+                await t
+            dpg.render_dearpygui_frame()
+
+        dpg.destroy_context()
+
+    asyncio.run(test())
