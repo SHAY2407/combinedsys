@@ -35,9 +35,10 @@ class Video:
 
 if __name__ == "__main__":
     import zmq
+    import socket
 
     dpg.create_context()
-    v = Video(zmq.Context(), "0.0.0.0:9000")
+    v = Video(zmq.Context(), socket.gethostbyname(socket.gethostname()))
     dpg.create_viewport(title=__loader__.name, width=600, height=200)
     dpg.setup_dearpygui()
     dpg.show_viewport()
