@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import dearpygui.dearpygui as dpg
+from server.camera import Camera
 
 
 class Video:
@@ -13,6 +14,7 @@ class Video:
         zmq_ctx: (zmq.Context): ZeroMQ context to use
         uri: (str, optional): Default ip and port for client video feed
         """
+        self.zmq_ctx = zmq_ctx
         with dpg.window(label="Live VideoFeed", width=500, height=100):
             self.uri_entry = dpg.add_input_text(
                 label="Client IP and Port", default_value=uri
@@ -27,7 +29,8 @@ class Video:
         self._server_start()
 
     def _server_start(self):
-        pass
+        self.__camera = Camera("Camera", self.uri, self.zmq_ctx)
+        self.__camera.start()
 
 
 if __name__ == "__main__":
