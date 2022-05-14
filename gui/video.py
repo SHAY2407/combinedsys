@@ -17,7 +17,7 @@ class Video:
         self.zmq_ctx = zmq_ctx
         with dpg.window(label="Live VideoFeed", width=500, height=100):
             self.uri_entry = dpg.add_input_text(
-                label="Client IP and Port", default_value=uri
+                label="Client IP", default_value=uri, decimal=True
             )
             self.start_btn = dpg.add_button(
                 label="Start Stream", callback=self.start_cmd
