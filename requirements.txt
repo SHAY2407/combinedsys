@@ -1,5 +1,6 @@
 dearpygui==1.6.2
 numpy==1.22.3
 opencv-python==4.5.5.64
+pyserial==3.5
 pyzmq==22.3.0
 zmq==0.0.0
