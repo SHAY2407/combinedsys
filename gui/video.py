@@ -12,7 +12,7 @@ class Video:
     Requires a valid dpg context to already be created.
     """
 
-    def __init__(self, zmq_ctx, uri, tag, res=(640, 480)):
+    def __init__(self, zmq_ctx, uri, tag, res=(640, 480), **dpg_window_args):
         """Args:
         zmq_ctx: (zmq.Context): ZeroMQ context to use
         uri: (str, optional): Default ip and port for client video feed
@@ -23,7 +23,7 @@ class Video:
             label="Live VideoFeed",
             width=max(500, res[0]) * 1.10,
             height=max(100, res[1]) * 1.30,
-            tag=tag,
+            **dpg_window_args
         ):
             self.uri_entry = dpg.add_input_text(
                 label="Client IP", default_value=uri, decimal=True

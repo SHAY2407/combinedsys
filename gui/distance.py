@@ -9,14 +9,16 @@ class Ultrasonic:
     Requires a valid dpg context to already be created.
     """
 
-    def __init__(self, zmq_ctx, uri, tag):
+    def __init__(self, zmq_ctx, uri, **dpg_window_args):
         """Args:
         zmq_ctx: (zmq.Context): ZeroMQ context to use
         uri: (str, optional): Default ip and port for client
         """
-        with dpg.window(label="Ultrasonic Distance", width=700, height=600, tag=tag):
+        with dpg.window(
+            label="Ultrasonic Distance", width=700, height=600, **dpg_window_args
+        ):
             self.uri_entry = dpg.add_input_text(
-                label="Client IP and Port", default_value=uri, decimal=True
+                label="Client IP", default_value=uri, decimal=True
             )
             self.start_btn = dpg.add_button(
                 label="Start Stream", callback=self.start_cmd
