@@ -19,9 +19,38 @@ def show_launcher():
         autosize=False,
         tag="launcher_window",
     ):
-        dpg.add_button(label="Camera", width=width, height=height // 3)
-        dpg.add_button(label="Motor", width=width, height=height // 3)
-        dpg.add_button(label="Distance", width=width, height=height // 3)
+        dpg.add_button(
+            label="Camera",
+            width=width,
+            height=height // 3,
+            tag="camera_launch",
+            callback=launch,
+        )
+        dpg.add_button(
+            label="Motor",
+            width=width,
+            height=height // 3,
+            tag="motor_launch",
+            callback=launch,
+        )
+        dpg.add_button(
+            label="Dist",
+            width=width,
+            height=height // 3,
+            tag="dist_launch",
+            callback=launch,
+        )
+
+
+def launch(sender):
+    if sender == "camera_launch":
+        pass
+    elif sender == "motor_launch":
+        print("Motor")
+        pass
+    elif sender == "dist_launch":
+        print("Dist")
+        pass
 
 
 def set_font():
