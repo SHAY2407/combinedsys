@@ -6,7 +6,13 @@ import asyncio
 import zmq.asyncio
 
 # No need for a class here
-def show_launcher():
+
+
+def show_launcher(gui_units):
+    """Draws a sidebar serving as a launcher for other windows.
+    Args:
+        gui_units: A dictionary containing the objects to launch
+    """
     width = dpg.get_viewport_width() * 0.1
     height = dpg.get_viewport_height()
     with dpg.window(
@@ -16,7 +22,7 @@ def show_launcher():
         no_close=True,
         width=width,
         height=height,
-        autosize=False,
+        autosize=True,
         tag="launcher_window",
     ):
         dpg.add_button(
@@ -25,6 +31,7 @@ def show_launcher():
             height=height // 3,
             tag="camera_launch",
             callback=launch,
+            user_data=gui_units,
         )
         dpg.add_button(
             label="Motor",
@@ -32,6 +39,7 @@ def show_launcher():
             height=height // 3,
             tag="motor_launch",
             callback=launch,
+            user_data=gui_units,
         )
         dpg.add_button(
             label="Dist",
@@ -39,18 +47,26 @@ def show_launcher():
             height=height // 3,
             tag="dist_launch",
             callback=launch,
+            user_data=gui_units,
         )
 
 
-def launch(sender):
+def launch(sender, value, gui_units):
     if sender == "camera_launch":
-        pass
+        if dpg.is_item_visible(gui_units["video"]):
+            dpg.focus_item(gui_units["video"])
+        else:
+            dpg.show_item(gui_units["video"])
     elif sender == "motor_launch":
-        print("Motor")
-        pass
+        if dpg.is_item_visible(gui_units["motor"]):
+            dpg.focus_item(gui_units["motor"])
+        else:
+            dpg.show_item(gui_units["motor"])
     elif sender == "dist_launch":
-        print("Dist")
-        pass
+        if dpg.is_item_visible(gui_units["distance"]):
+            dpg.focus_item(gui_units["distance"])
+        else:
+            dpg.show_item(gui_units["distance"])
 
 
 def set_font():
@@ -58,15 +74,3 @@ def set_font():
         with dpg.font("iosevka-regular.ttf", 20) as main_font:
             dpg.add_font_chars([0x1F4F7])
             dpg.bind_font(main_font)
-
-
-if __name__ == "__main__":
-    dpg.create_context()
-    dpg.create_viewport(title=__loader__.name, width=600, height=200)
-    set_font()
-    show_launcher()
-    dpg.setup_dearpygui()
-    dpg.show_viewport()
-    dpg.set_primary_window("launcher_window", True)
-    dpg.start_dearpygui()
-    dpg.destroy_context()
