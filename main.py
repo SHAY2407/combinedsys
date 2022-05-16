@@ -15,9 +15,14 @@ gui.launch.set_font()
 # Create GUI units
 zmq_async_ctx = zmq.asyncio.Context()
 host_ip = socket.gethostbyname(socket.gethostname())
-v = Video(zmq_async_ctx, host_ip, "video_window")
-d = Ultrasonic(zmq_async_ctx, host_ip, "distance_window")
-gui_units = {"video": "video_window", "distance": "distance_window"}
+v = Video(zmq_async_ctx, host_ip, tag="video_window")
+d = Ultrasonic(zmq_async_ctx, host_ip, tag="distance_window")
+m = Motor(zmq_async_ctx, host_ip, tag="motor_window")
+gui_units = {
+    "video": "video_window",
+    "distance": "distance_window",
+    "motor": "motor_window",
+}
 
 gui.launch.show_launcher(gui_units)
 dpg.setup_dearpygui()
