@@ -55,9 +55,9 @@ def launch(sender):
 
 def set_font():
     with dpg.font_registry():
-        with dpg.font("iosevka-regular.ttf", 20) as fira_font:
+        with dpg.font("iosevka-regular.ttf", 20) as main_font:
             dpg.add_font_chars([0x1F4F7])
-            dpg.bind_font(fira_font)
+            dpg.bind_font(main_font)
 
 
 if __name__ == "__main__":
