@@ -21,7 +21,7 @@ def show_launcher(gui_units):
         horizontal_scrollbar=False,
         no_close=True,
         width=width,
-        height=height,
+        height=-1,
         autosize=True,
         tag="launcher_window",
     ):
