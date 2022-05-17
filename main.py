@@ -2,6 +2,7 @@
 
 import gui.launch
 from gui.video import Video
+from gui.motor import Motor
 from gui.distance import Ultrasonic
 import dearpygui.dearpygui as dpg
 import zmq.asyncio
@@ -32,8 +33,9 @@ dpg.show_viewport()
 async def run_and_update():
     while dpg.is_dearpygui_running():
         if v.started:
-            t = asyncio.create_task(v.update())
-            await t
+            await asyncio.create_task(v.update())
+        if m.task:
+            await asyncio.create_task(m.update())
         dpg.render_dearpygui_frame()
     dpg.destroy_context()
 
