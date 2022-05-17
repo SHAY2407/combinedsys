@@ -19,6 +19,7 @@ class Motor:
                 label="Client IP", default_value=uri, decimal=True
             )
             self.start_btn = dpg.add_button(label="Connect", callback=self.start_cmd)
+            self.task = None
             with dpg.group(horizontal=True):
                 dpg.add_button(
                     label="Forward [W]", callback=self.move_command, tag="w_button"
@@ -36,22 +37,23 @@ class Motor:
                     label="Stop [B]", callback=self.move_command, tag="b_button"
                 )
 
+    async def update(self):
+        t = self.task
+        self.task = None
+        await t
+
     def start_cmd(self, sender):
         self.sabertooth = Sabertooth(self.uri, self.zmq_ctx)
         self.sabertooth.start()
 
-    async def update(self):
-        # Implement this
-        pass
-
-    async def move_command(self, sender):
+    def move_command(self, sender):
         if sender == "w_button":
-            await self.sabertooth.forward()
+            self.task = self.sabertooth.forward()
         elif sender == "s_button":
-            await self.sabertooth.backward()
+            self.task = self.sabertooth.backward()
         elif sender == "a_button":
-            await self.sabertooth.left()
+            self.task = self.sabertooth.left()
         elif sender == "d_button":
-            await self.sabertooth.right()
+            self.task = self.sabertooth.right()
         elif sender == "b_button":
-            await self.sabertooth.stop()
+            self.task = self.sabertooth.stop()
