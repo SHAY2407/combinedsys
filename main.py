@@ -34,6 +34,8 @@ async def run_and_update():
     while dpg.is_dearpygui_running():
         if v.started:
             await asyncio.create_task(v.update())
+        if d.started:
+            await asyncio.create_task(d.update())
         if m.task:
             await asyncio.create_task(m.update())
         dpg.render_dearpygui_frame()
