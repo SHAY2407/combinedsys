@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import dearpygui.dearpygui as dpg
+import time
+import asyncio
 
 
 class Ultrasonic:
@@ -14,6 +16,8 @@ class Ultrasonic:
         zmq_ctx: (zmq.Context): ZeroMQ context to use
         uri: (str, optional): Default ip and port for client
         """
+        self.started = False
+        self.zmq_ctx = zmq_ctx
         with dpg.window(
             label="Ultrasonic Distance", width=700, height=600, **dpg_window_args
         ):
@@ -46,22 +50,33 @@ class Ultrasonic:
         self._server_start()
 
     def _server_start(self):
-        pass
+        self.__ultrasonic = Ultrasonic(self.uri, self.zmq_ctx)
+        self.ultrasonic.start()
+        self.started = True
+
+    async def update(self):
+        dist = await self.ultrasonic.get_distance()
+        self._update_series(dist, time.time())
 
 
 if __name__ == "__main__":
     import zmq
     import socket
 
-    dpg.create_context()
-    v = Ultrasonic(zmq.Context(), socket.gethostbyname(socket.gethostname()))
-    # Add some values for testing the plot
-    v._update_series(10, 1)
-    v._update_series(40, 3)
-    v._update_series(50, 5)
+    async def test():
+        dpg.create_context()
+        v = Ultrasonic(zmq.Context(), socket.gethostbyname(socket.gethostname()))
 
-    dpg.create_viewport(title=__loader__.name, width=800, height=800)
-    dpg.setup_dearpygui()
-    dpg.show_viewport()
-    dpg.start_dearpygui()
-    dpg.destroy_context()
+        dpg.create_viewport(title=__loader__.name, width=800, height=800)
+        dpg.setup_dearpygui()
+        dpg.show_viewport()
+
+        while dpg.is_dearpygui_running():
+            if v.started:
+                t = asyncio.create_task(v.update())
+                await t
+            dpg.render_dearpygui_frame()
+
+        dpg.destroy_context()
+
+    asyncio.run(test())
